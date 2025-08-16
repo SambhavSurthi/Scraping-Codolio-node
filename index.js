@@ -1,8 +1,9 @@
+// index.js
 const express = require('express');
-const playwright = require('playwright');
+const { chromium } = require('playwright-chromium'); // lightweight version for Render
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Main function to scrape Codolio data
 async function fetchCodolioData(username) {
@@ -11,7 +12,11 @@ async function fetchCodolioData(username) {
   }
 
   const URL = `https://codolio.com/profile/${username}/problemSolving`;
-  const browser = await playwright.chromium.launch({ headless: true });
+  const browser = await chromium.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'], // required for Render
+  });
+
   const page = await browser.newPage();
 
   try {
