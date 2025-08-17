@@ -11,11 +11,23 @@ async function fetchCodolioData(username) {
   }
 
   const URL = `https://codolio.com/profile/${username}/problemSolving`;
-  const browser = await playwright.chromium.launch({ headless: true });
+  const browser = await playwright.chromium.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+  });
   const page = await browser.newPage();
 
   try {
-    await page.goto(URL, { waitUntil: 'networkidle' });
+    // Fake user agent to bypass bot detection
+    await page.setUserAgent(
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+      "(KHTML, like Gecko) Chrome/115 Safari/537.36"
+    );
+
+    await page.goto(URL, { waitUntil: 'domcontentloaded' });
+
+    // Explicit wait for a key element
+    await page.waitForSelector('text=Total Questions', { timeout: 15000 });
 
     const data = {
       basicStats: {},
@@ -112,6 +124,11 @@ async function fetchCodolioData(username) {
 
   } catch (error) {
     console.error('Scraping error:', error);
+
+    // Debug dump (helps in Render logs)
+    const html = await page.content();
+    console.error("Page snapshot:", html.slice(0, 500));
+
     return { error: 'Failed to scrape data' };
   } finally {
     await browser.close();

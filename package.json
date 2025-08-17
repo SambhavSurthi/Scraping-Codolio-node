@@ -1,20 +1,15 @@
 {
   "name": "scraper",
   "version": "1.0.0",
-  "description": "",
+  "description": "Codolio scraper",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "postinstall": "npx playwright install --with-deps"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "express": "^5.1.0",
-    "playwright": "^1.54.2",
-    "puppeteer": "^24.16.2"
+    "playwright": "^1.54.2"
   }
 }
